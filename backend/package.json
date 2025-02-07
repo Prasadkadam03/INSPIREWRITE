@@ -5,7 +5,7 @@
     "deploy": "wrangler deploy --minify"
   },
   "dependencies": {
-    "@_prasadk_/inspirewrite-common": "^1.0.0",
+    "@_prasadk_/inspirewrite-common": "^2.0.1",
     "@prisma/client": "^6.3.1",
     "@prisma/extension-accelerate": "^1.2.1",
     "hono": "^4.6.20",
