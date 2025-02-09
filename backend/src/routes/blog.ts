@@ -112,7 +112,8 @@ blogRouter.get('/bulk', async (c) => {
                 select: {
                     name: true
                 }
-            }
+            },
+            publishedAt: true
         }
     });
     return c.json({
@@ -139,7 +140,8 @@ blogRouter.get('/:id', async (c) => {
                     select: {
                         name: true
                     }
-                }
+                },
+                publishedAt: true
             }
         })
     
@@ -153,3 +155,5 @@ blogRouter.get('/:id', async (c) => {
         });
     }
 })
+
+

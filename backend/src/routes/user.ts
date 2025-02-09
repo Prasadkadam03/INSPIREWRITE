@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
-import { sign } from 'hono/jwt'
+import { sign, verify } from 'hono/jwt'
 import { signinInput, signupInput } from "@_prasadk_/inspirewrite-common";
 
 
@@ -70,4 +70,28 @@ userRouter.post('/signin', async (c) => {
 
 	const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
 	return c.json({ jwt });
+})
+
+userRouter.get('/', async (c) => {
+	const prisma = new PrismaClient({
+		datasourceUrl: c.env.DATABASE_URL,
+	}).$extends(withAccelerate());
+
+	const jwt = c.req.header('Authorization');
+    if (!jwt) {
+        c.status(401);
+        return c.json({ error: "unauthorized" });
+    }
+	const token = jwt.split(' ')[1];
+	const user = await verify(token, c.env.JWT_SECRET) as { id: string };
+	if (!user) {
+		c.status(401);
+		return c.json({ error: "unauthorized" });
+	}
+	const me = await prisma.user.findUnique({
+		where: {
+			id: user.id
+		}
+	});
+	return c.json({ id: me?.id, name: me?.name });
 })

@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { formatDate } from "./FormatDate";
 interface BlogCardProps {
     authorName: string;
     title: string;
@@ -23,7 +24,7 @@ export const BlogCard = ({
                     <Circle />
                 </div>
                 <div className="pl-2 font-thin text-slate-500 text-sm flex justify-center flex-col">
-                    {publishedDate}
+                    {formatDate(publishedDate)}
                 </div>
             </div>
             <div className="text-xl font-semibold pt-2">
