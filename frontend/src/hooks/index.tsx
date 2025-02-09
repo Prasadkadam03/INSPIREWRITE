@@ -10,7 +10,33 @@ export interface Blog {
     "author": {
         "name": string
     }
+    "publishedAt": string;
 }
+
+export const useUserName = () => { 
+    const [name, setName] = useState<string>("");
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        axios.get(`${BACKEND_URL}/api/v1/user`, {
+            headers: {
+                Authorization: localStorage.getItem("token")
+            }
+        })
+        .then(response => {
+            setName(response.data.name || "Anonymous");
+        })
+        .catch(() => {
+            setName("Anonymous");
+        })
+        .finally(() => {
+            setLoading(false);
+        });
+    }, []);
+
+    return { loading, name };
+}
+
 
 export const useBlog = ({ id }: { id: string }) => {
     const [loading, setLoading] = useState(true);
