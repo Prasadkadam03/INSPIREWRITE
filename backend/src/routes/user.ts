@@ -21,26 +21,28 @@ userRouter.post('/signup', async (c) => {
 	}
 
 	const prisma = new PrismaClient({
-		datasourceUrl: c.env?.DATABASE_URL,
+		datasources: {
+			db: {
+				url: c.env?.DATABASE_URL,
+			},
+		},
 	}).$extends(withAccelerate());
-	console.log("1");
+
 	try {
-		console.log("2");
 		const user = await prisma.user.create({
 			data: {
+				name: body.name,
 				email: body.email,
 				password: body.password
 			}
 		});
-		console.log("3");
 		const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
-		console.log("4");
 		return c.json({ jwt });
 	} catch (e) {
 		c.status(403);
 		return c.json({ error: "error while signing up" });
 	}
-})
+});
 
 userRouter.post('/signin', async (c) => {
 	const body = await c.req.json();
