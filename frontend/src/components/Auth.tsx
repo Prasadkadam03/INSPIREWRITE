@@ -20,7 +20,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
             navigate("/blogs");
         } catch (e) {
             if (axios.isAxiosError(e)) {
-                alert(e.response?.data?.error|| "Something went wrong");
+                alert(e.response?.data?.error || "Something went wrong");
             } else {
                 alert("Unexpected error occurred");
             }
