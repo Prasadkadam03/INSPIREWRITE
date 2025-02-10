@@ -15,14 +15,11 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
     async function sendRequest() {
         try {
             const response = await axios.post(`${BACKEND_URL}/api/v1/user/${type === "signup" ? "signup" : "signin"}`, postInputs);
-            console.log(response.data);
-            console.log(response.data.token);
             const jwt =  response.data.jwt;
             localStorage.setItem("token", "Bearer " + jwt);
             navigate("/blogs");
         } catch(e) {
             alert("Error while signing up")
-            // alert the user here that the request failed
         }
     }
     
@@ -53,7 +50,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
                             email: e.target.value
                         })
                     }} />
-                    <LabelledInput label="Password" type={"password"} placeholder="******" onChange={(e) => {
+                    <LabelledInput  label="Password" type={"password"} placeholder="******" onChange={(e) => {
                         setPostInputs({
                             ...postInputs,
                             password: e.target.value
@@ -76,7 +73,7 @@ interface LabelledInputType {
 function LabelledInput({ label, placeholder, onChange, type }: LabelledInputType) {
     return <div>
         <label className="block mb-2 text-sm text-black font-semibold pt-4">{label}</label>
-        <input onChange={onChange} type={type || "text"} id="first_name" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder={placeholder} required />
+        <input onChange={onChange} type={type || "text"}  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5" placeholder={placeholder} required />
     </div>
 }
 
