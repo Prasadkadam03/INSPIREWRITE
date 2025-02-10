@@ -3,6 +3,8 @@ import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { sign, verify } from 'hono/jwt'
 import { signinInput, signupInput } from "@_prasadk_/inspirewrite-common";
+import bcrypt from "bcryptjs";
+
 
 
 export const userRouter = new Hono<{
@@ -19,7 +21,6 @@ userRouter.post('/signup', async (c) => {
 		c.status(400);
 		return c.json({ error: "invalid input" });
 	}
-
 	const prisma = new PrismaClient({
 		datasources: {
 			db: {
@@ -28,12 +29,25 @@ userRouter.post('/signup', async (c) => {
 		},
 	}).$extends(withAccelerate());
 
+	const user = await prisma.user.findUnique({
+		where: {
+			email: body.email
+		}
+	});
+
+	if (user) {
+		c.status(403);
+		return c.json({ error: "user already exist" });
+	}
+
+	const hashedPassword = await bcrypt.hash(body.password, 10);
+
 	try {
 		const user = await prisma.user.create({
 			data: {
 				name: body.name,
 				email: body.email,
-				password: body.password
+				password: hashedPassword
 			}
 		});
 		const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
@@ -66,6 +80,11 @@ userRouter.post('/signin', async (c) => {
 	if (!user) {
 		c.status(403);
 		return c.json({ error: "user not found" });
+	}
+	const isPasswordValid = await bcrypt.compare(body.password, user.password);
+	if (!isPasswordValid) {
+		c.status(403);
+		return c.json({ error: "invalid password" });
 	}
 
 	const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
