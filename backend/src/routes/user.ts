@@ -19,7 +19,7 @@ userRouter.post('/signup', async (c) => {
 	const { success } = signupInput.safeParse(body);
 	if (!success) {
 		c.status(400);
-		return c.json({ error: "invalid input" });
+		return c.json({ error: "Invalid input" });
 	}
 	const prisma = new PrismaClient({
 		datasources: {
@@ -37,7 +37,7 @@ userRouter.post('/signup', async (c) => {
 
 	if (user) {
 		c.status(403);
-		return c.json({ error: "user already exist" });
+		return c.json({ error: "User already exist" });
 	}
 
 	const hashedPassword = await bcrypt.hash(body.password, 10);
@@ -54,7 +54,7 @@ userRouter.post('/signup', async (c) => {
 		return c.json({ jwt });
 	} catch (e) {
 		c.status(403);
-		return c.json({ error: "error while signing up" });
+		return c.json({ error: "Error while signing up" });
 	}
 });
 
@@ -64,7 +64,7 @@ userRouter.post('/signin', async (c) => {
 	const { success } = signinInput.safeParse(body);
 	if (!success) {
 		c.status(400);
-		return c.json({ error: "invalid input" });
+		return c.json({ error: "Invalid input" });
 	}
 
 	const prisma = new PrismaClient({
@@ -79,12 +79,12 @@ userRouter.post('/signin', async (c) => {
 
 	if (!user) {
 		c.status(403);
-		return c.json({ error: "user not found" });
+		return c.json({ error: "User not found" });
 	}
 	const isPasswordValid = await bcrypt.compare(body.password, user.password);
 	if (!isPasswordValid) {
 		c.status(403);
-		return c.json({ error: "invalid password" });
+		return c.json({ error: "Invalid password" });
 	}
 
 	const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
@@ -99,7 +99,7 @@ userRouter.get('/', async (c) => {
 	const jwt = c.req.header('Authorization');
     if (!jwt) {
         c.status(401);
-        return c.json({ error: "unauthorized" });
+        return c.json({ error: "Unauthorized" });
     }
 	const token = jwt.split(' ')[1];
 	const user = await verify(token, c.env.JWT_SECRET) as { id: string };
