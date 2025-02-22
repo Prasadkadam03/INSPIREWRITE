@@ -22,6 +22,12 @@ export const FullBlog = ({ blog }: { blog: Blog }) => {
                         <div className="p-2 text-blue-500">
                             {blog.author.occupation}
                         </div>
+                        <div className="flex justify-center flex-col pl-2 flex justify-center flex-col">
+                            <Circle />
+                        </div>
+                        <div className="p-2 text-red-500">
+                            {blog.area}
+                        </div>
                     </div>
                     <div className="pt-4">
                         {blog.content}
