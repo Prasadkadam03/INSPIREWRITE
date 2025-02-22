@@ -27,7 +27,7 @@ model Post {
   title     String
   content   String
   published Boolean  @default(false)
-  Area     String  @default("other")
+  area     String  @default("other")
   author    User     @relation(fields: [authorId], references: [id])
   authorId  String
   publishedAt DateTime @default(now())
