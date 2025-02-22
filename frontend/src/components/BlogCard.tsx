@@ -7,6 +7,7 @@ interface BlogCardProps {
     content: string;
     publishedDate: string;
     id: string;
+    area : string;
 }
 
 export const BlogCard = ({
@@ -16,6 +17,8 @@ export const BlogCard = ({
     title,
     content,
     publishedDate,
+    area
+
 }: BlogCardProps) => {
     return <Link to={`/blog/${id}`}>
         <div className="p-4 border-b border-slate-200 pb-4 w-screen max-w-screen-md cursor-pointer">
@@ -54,7 +57,7 @@ export const BlogCard = ({
                 <div className="flex justify-center flex-col pl-2 flex justify-center flex-col"><Circle /></div>
 
                 <div className="pl-2 font-thin text-red-900 text-sm text-blue-300 flex justify-center flex-col">
-                    Education
+                    {area}
                 </div>
             </div>
         </div>

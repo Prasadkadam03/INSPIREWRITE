@@ -12,6 +12,7 @@ export interface Blog {
         "occupation": string;
     }
     "publishedAt": string;
+    "area" : string;
 }
 
 export const useUserName = () => { 
