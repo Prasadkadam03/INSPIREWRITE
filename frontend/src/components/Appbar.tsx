@@ -7,7 +7,7 @@ export const Appbar = () => {
 
     return (
         <div className="border-b flex justify-between px-10 py-4">
-            <Link to={'/blogs'} className="flex flex-col justify-center cursor-pointer">
+            <Link to={'/blogs'} className="flex flex-col justify-center cursor-pointer text-4xl font-bold hover:text-red-900 text-red-700">
                 InspireWrite
             </Link>
             <div>
