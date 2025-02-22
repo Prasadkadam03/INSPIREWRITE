@@ -9,7 +9,8 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
     const [postInputs, setPostInputs] = useState<SignupInput>({
         name: "",
         email: "",
-        password: ""
+        password: "",
+        occupation: ""
     });
 
     async function sendRequest() {
@@ -55,6 +56,12 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
                             email: e.target.value
                         })
                     }} />
+                    { type === "signup" ? <LabelledInput label="Occupation" placeholder="Student" onChange={(e) => {
+                        setPostInputs({
+                            ...postInputs,
+                            occupation: e.target.value
+                        })
+                    }} /> : null}
                     <LabelledInput  label="Password" type={"password"} placeholder="******" onChange={(e) => {
                         setPostInputs({
                             ...postInputs,

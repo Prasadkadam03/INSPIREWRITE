@@ -1,9 +1,9 @@
 import { Blog } from "../hooks"
 import { Appbar } from "./Appbar"
-import { Avatar } from "./BlogCard"
+import { Avatar, Circle } from "./BlogCard"
 import { formatDate } from "./FormatDate"
 
-export const FullBlog = ({ blog }: {blog: Blog}) => {
+export const FullBlog = ({ blog }: { blog: Blog }) => {
     return <div>
         <Appbar />
         <div className="flex justify-center">
@@ -12,8 +12,16 @@ export const FullBlog = ({ blog }: {blog: Blog}) => {
                     <div className="text-5xl font-extrabold">
                         {blog.title}
                     </div>
-                    <div className="text-slate-500 pt-2">
-                        {formatDate(blog.publishedAt)}
+                    <div className="flex pt-4">
+                        <div className="text-slate-500 pt-2">
+                            {formatDate(blog.publishedAt)}
+                        </div>
+                        <div className="flex justify-center flex-col pl-2 flex justify-center flex-col">
+                            <Circle />
+                        </div>
+                        <div className="p-2 text-blue-500">
+                            {blog.author.occupation}
+                        </div>
                     </div>
                     <div className="pt-4">
                         {blog.content}
@@ -35,9 +43,9 @@ export const FullBlog = ({ blog }: {blog: Blog}) => {
                                 Random catch phrase about the author's ability to grab the user's attention
                             </div>
                         </div>
-                    </div>  
+                    </div>
                 </div>
-                
+
             </div>
         </div>
     </div>
