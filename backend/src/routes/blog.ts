@@ -11,7 +11,8 @@ export const blogRouter = new Hono<{
         JWT_SECRET: string,
     },
     Variables: {
-        userId: string
+        userId: string,
+        filter: string
     }
 }>();
 
@@ -102,10 +103,14 @@ blogRouter.put('/', async (c) => {
 })
 
 blogRouter.get('/bulk', async (c) => {
+
+    const filter = c.req.query("filter") || "" ;
+    
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate())
-    const blogs = await prisma.post.findMany({
+    
+    const blogsByUser = await prisma.post.findMany({
         select: {
             content: true,
             title: true,
@@ -118,8 +123,44 @@ blogRouter.get('/bulk', async (c) => {
                 }
             },
             publishedAt: true
+        },
+        where: {
+            author:{
+                name:{
+                    contains: filter
+                }
+            }
         }
     });
+    const blogsByContent = await prisma.post.findMany({
+        select: {
+            content: true,
+            title: true,
+            id: true,
+            area: true,
+            author: {
+                select: {
+                    name: true ,
+                    occupation: true
+                }
+            },
+            publishedAt: true
+        },
+        where: {
+            content:{
+                contains: filter
+            },
+            title:{
+                contains: filter
+            }
+        }
+    });
+
+    const blogsMap = new Map();
+    blogsByUser.concat(blogsByContent).forEach(blog => {
+        blogsMap.set(blog.id, blog);
+    });
+    const blogs = Array.from(blogsMap.values());
     return c.json({
         blogs
     })
