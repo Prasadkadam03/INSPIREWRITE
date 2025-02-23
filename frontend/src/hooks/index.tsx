@@ -62,22 +62,27 @@ export const useBlog = ({ id }: { id: string }) => {
     }
 
 }
-export const useBlogs = () => {
+export const useBlogs = ({ query }: { query: string }) => {
     const [loading, setLoading] = useState(true);
     const [blogs, setBlogs] = useState<Blog[]>([]);
 
     useEffect(() => {
-        axios.get(`${BACKEND_URL}/api/v1/blog/bulk`, {
+        axios.get(`${BACKEND_URL}/api/v1/blog/bulk?filter=${query}`, {
             headers: {
                 Authorization: localStorage.getItem("token")
             }
         })
-            .then(response => {
+        .then(response => {
+            if (response.data.blogs.length === 0) {
+                setBlogs([{ content: "", title: "No blogs available with search content", id: "", author: { name: "", occupation: "" }, publishedAt: new Date().toISOString(), area: "" }]);
+            } else {
                 setBlogs(response.data.blogs);
-                setLoading(false);
-            })
-    }, [])
+            }
+            setLoading(false);
+        })
+    }, [query])
 
+    
     return {
         loading,
         blogs
