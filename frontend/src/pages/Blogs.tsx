@@ -1,6 +1,7 @@
 import { Appbar } from "../components/Appbar"
 import { BlogCard } from "../components/BlogCard"
 import { BlogSkeleton } from "../components/BlogSkeleton";
+import { SearchBar } from "../components/SearchBar";
 import { useBlogs } from "../hooks";
 
 export const Blogs = () => {
@@ -25,6 +26,9 @@ export const Blogs = () => {
         <Appbar />
         <div  className="flex justify-center">
             <div>
+                <div className="">
+                <SearchBar/>
+                </div>
                 {blogs.map(blog => <BlogCard
                     key={blog.id}
                     id={blog.id}
