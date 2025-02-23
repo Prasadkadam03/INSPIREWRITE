@@ -104,7 +104,7 @@ blogRouter.put('/', async (c) => {
 
 blogRouter.get('/bulk', async (c) => {
 
-    const filter = c.req.query("filter") || "" ;
+    const filter = c.req.query("filter")?.trim() || "";
     
     const prisma = new PrismaClient({
         datasourceUrl: c.env.DATABASE_URL,
@@ -118,16 +118,17 @@ blogRouter.get('/bulk', async (c) => {
             area: true,
             author: {
                 select: {
-                    name: true ,
+                    name: true,
                     occupation: true
                 }
             },
             publishedAt: true
         },
         where: {
-            author:{
-                name:{
-                    contains: filter
+            author: {
+                name: {
+                    contains: filter,
+                    mode: 'insensitive'
                 }
             }
         }
@@ -140,19 +141,27 @@ blogRouter.get('/bulk', async (c) => {
             area: true,
             author: {
                 select: {
-                    name: true ,
+                    name: true,
                     occupation: true
                 }
             },
             publishedAt: true
         },
         where: {
-            content:{
-                contains: filter
-            },
-            title:{
-                contains: filter
-            }
+            OR: [
+                {
+                    content: {
+                        contains: filter,
+                        mode: 'insensitive'
+                    }
+                },
+                {
+                    title: {
+                        contains: filter,
+                        mode: 'insensitive'
+                    }
+                }
+            ]
         }
     });
 
