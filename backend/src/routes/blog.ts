@@ -194,7 +194,8 @@ blogRouter.get('/:id', async (c) => {
                 author: {
                     select: {
                         name: true ,
-                        occupation: true
+                        occupation: true,
+                        bio : true
                     }
                 },
                 publishedAt: true

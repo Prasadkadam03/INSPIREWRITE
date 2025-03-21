@@ -10,6 +10,7 @@ export interface Blog {
     "author": {
         "name": string;
         "occupation": string;
+        "bio": string;
     }
     "publishedAt": string;
     "area" : string;
@@ -74,7 +75,7 @@ export const useBlogs = ({ query }: { query: string }) => {
         })
         .then(response => {
             if (response.data.blogs.length === 0) {
-                setBlogs([{ content: "", title: "No blogs available with search content", id: "", author: { name: "", occupation: "" }, publishedAt: new Date().toISOString(), area: "" }]);
+                setBlogs([{ content: "", title: "No blogs available with search content", id: "", author: { name: "", occupation: "" ,bio : "" }, publishedAt: new Date().toISOString(), area: "" }]);
             } else {
                 setBlogs(response.data.blogs);
             }

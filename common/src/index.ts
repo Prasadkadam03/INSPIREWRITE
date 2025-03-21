@@ -6,6 +6,7 @@ export const signupInput = z.object({
     password: z.string().min(6),
     name: z.string().optional(),
     occupation: z.string(),
+    bio : z.string(),
 })
 
 export type SignupInput = z.infer<typeof signupInput>
@@ -32,7 +33,8 @@ export const updateBlogInput = z.object({
     title: z.string(),
     content: z.string(),
     area : z.string(),
-    id: z.string()
+    id: z.string(),
+    bio : z.string()
 })
 
 export type UpdateBlogInput = z.infer<typeof updateBlogInput>

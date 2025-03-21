@@ -48,7 +48,8 @@ userRouter.post('/signup', async (c) => {
 				name: body.name,
 				email: body.email,
 				password: hashedPassword,
-				occupation: body.occupation
+				occupation: body.occupation,
+				bio: body.bio,
 			}
 		});
 		const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
@@ -113,5 +114,5 @@ userRouter.get('/', async (c) => {
 			id: user.id
 		}
 	});
-	return c.json({ id: me?.id, name: me?.name , occupation: me?.occupation});
+	return c.json({ id: me?.id, name: me?.name , occupation: me?.occupation , bio: me?.bio });
 })

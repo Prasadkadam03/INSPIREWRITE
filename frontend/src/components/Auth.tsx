@@ -10,7 +10,8 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
         name: "",
         email: "",
         password: "",
-        occupation: ""
+        occupation: "",
+        bio: ""
     });
 
     async function sendRequest() {
@@ -57,6 +58,12 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
                         })
                     }} />
                     { type === "signup" ? <LabelledInput label="Occupation" placeholder="Student" onChange={(e) => {
+                        setPostInputs({
+                            ...postInputs,
+                            bio: e.target.value
+                        })
+                    }} /> : null}
+                    { type === "signup" ? <LabelledInput label="Bio" placeholder="Write about Yourself..." onChange={(e) => {
                         setPostInputs({
                             ...postInputs,
                             occupation: e.target.value
