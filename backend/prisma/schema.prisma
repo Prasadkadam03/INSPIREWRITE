@@ -16,13 +16,13 @@ datasource db {
 model User {
   id       String   @id @default(uuid())
   email    String   @unique
-  name     String?
+  name     String
   password String
+  bio      String   @default("Inspirewrite User")
   occupation String @default("other")
   posts    Post[]
-  likes    Like[]
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @default(now())
 }
 
 model Post {
@@ -34,14 +34,5 @@ model Post {
   author    User     @relation(fields: [authorId], references: [id])
   authorId  String
   publishedAt DateTime @default(now())
-  likes     Like[]
 }
 
-model Like {
-  id        String @id @default(uuid())
-  post      Post   @relation(fields: [postId], references: [id])
-  postId    String
-  user      User   @relation(fields: [userId], references: [id])
-  userId    String
-  likedAt   DateTime @default(now())
-}
