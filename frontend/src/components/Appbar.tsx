@@ -16,7 +16,7 @@ export const Appbar = () => {
                         New
                     </button>
                 </Link>
-                <Avatar size={"big"} name={loading ? "---" : name} />
+                <Link to={"/UpdateUser"}><Avatar size={"big"} name={loading ? "---" : name} /></Link>
             </div>
         </div>
     );
