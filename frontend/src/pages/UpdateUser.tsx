@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { updateUserInput } from "@_prasadk_/inspirewrite-common";
 import { BACKEND_URL } from "../config";
 import { Appbar } from "../components/Appbar";
 
 export const UpdateUser = () => {
-    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         name: "",
         occupation: "",
@@ -47,7 +45,6 @@ export const UpdateUser = () => {
         e.preventDefault();
         setError(null);
 
-        // Validate input using updateUserInput
         const validation = updateUserInput.safeParse(formData);
         if (!validation.success) {
             setError("Invalid input. Please check your details.");
