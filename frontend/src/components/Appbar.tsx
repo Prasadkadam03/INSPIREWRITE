@@ -1,23 +1,37 @@
-import { useUserName } from "../hooks"
-import { Avatar } from "./BlogCard"
-import { Link } from "react-router-dom"
+import { useUserName } from "../hooks";
+import { Avatar } from "./BlogCard";
+import { Link } from "react-router-dom";
 
 export const Appbar = () => {
     const { loading, name } = useUserName();
 
     return (
-        <div className="border-b flex justify-between px-10 py-4">
-            <Link to={'/blogs'} className="flex flex-col justify-center cursor-pointer text-4xl font-bold hover:text-red-900 text-red-700">
+        <div className="border-b flex justify-between items-center px-10 py-4 bg-white shadow-sm">
+            {/* Logo Section */}
+            <Link
+                to="/blogs"
+                className="text-4xl font-bold text-red-700 hover:text-red-900 transition-colors"
+            >
                 InspireWrite
             </Link>
-            <div>
-                <Link to={`/publish`}>
-                    <button type="button" className="mr-4 text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 text-center me-2 mb-2">
+
+            {/* Actions Section */}
+            <div className="flex items-center space-x-4">
+                {/* New Blog Button */}
+                <Link to="/publish">
+                    <button
+                        type="button"
+                        className="text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-sm px-5 py-2.5 transition"
+                    >
                         New
                     </button>
                 </Link>
-                <Link to={"/UpdateUser"}><Avatar size={"big"} name={loading ? "---" : name} /></Link>
+
+                {/* User Avatar */}
+                <Link to="/UpdateUser">
+                    <Avatar size="big" name={loading ? "..." : name || "Guest"} />
+                </Link>
             </div>
         </div>
     );
-}
+};
