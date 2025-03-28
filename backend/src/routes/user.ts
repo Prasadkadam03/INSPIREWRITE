@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { PrismaClient } from '@prisma/client/edge'
 import { withAccelerate } from '@prisma/extension-accelerate'
 import { sign, verify } from 'hono/jwt'
-import { signinInput, signupInput } from "@_prasadk_/inspirewrite-common";
+import { signinInput, signupInput, updateUserInput } from "@_prasadk_/inspirewrite-common";
 import bcrypt from "bcryptjs";
 
 
@@ -117,6 +117,52 @@ userRouter.get('/', async (c) => {
 	return c.json({ id: me?.id, name: me?.name , occupation: me?.occupation , bio: me?.bio });
 })
 
-userRouter.put('/', async (c) => {
-		
-})
+userRouter.put('/updateUser', async (c) => {
+    const prisma = new PrismaClient({
+        datasourceUrl: c.env.DATABASE_URL,
+    }).$extends(withAccelerate());
+
+    const jwt = c.req.header('Authorization');
+    if (!jwt) {
+        c.status(401);
+        return c.json({ error: "Unauthorized" });
+    }
+
+    const token = jwt.split(' ')[1];
+    const user = await verify(token, c.env.JWT_SECRET) as { id: string };
+    if (!user) {
+        c.status(401);
+        return c.json({ error: "Unauthorized" });
+    }
+
+    const body = await c.req.json();
+
+    const { success, data } = updateUserInput.safeParse(body);
+    if (!success) {
+        c.status(400);
+        return c.json({ error: "Invalid input" });
+    }
+
+    try {
+        const updatedUser = await prisma.user.update({
+            where: {
+                id: user.id,
+            },
+            data: {
+                name: data.name,
+                occupation: data.occupation,
+                bio: data.bio,
+            },
+        });
+
+        return c.json({
+            id: updatedUser.id,
+            name: updatedUser.name,
+            occupation: updatedUser.occupation,
+            bio: updatedUser.bio,
+        });
+    } catch (e) {
+        c.status(500);
+        return c.json({ error: "Error updating user" });
+    }
+});
