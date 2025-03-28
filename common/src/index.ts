@@ -19,6 +19,15 @@ export const signinInput = z.object({
 
 export type SigninInput = z.infer<typeof signinInput>
 
+export const updateUserInput = z.object({
+    email: z.string().email().optional(),
+    name: z.string().optional().optional(),
+    occupation: z.string().optional(),
+    bio : z.string().optional(),
+})
+
+export type updateUserInput = z.infer<typeof updateUserInput>
+
 //create blog input
 export const createBlogInput = z.object({
     title: z.string(),
