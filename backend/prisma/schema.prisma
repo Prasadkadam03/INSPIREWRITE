@@ -16,7 +16,7 @@ datasource db {
 model User {
   id       String   @id @default(uuid())
   email    String   @unique
-  name     String
+  name     String     
   password String
   bio      String   @default("Inspirewrite User")
   occupation String @default("other")

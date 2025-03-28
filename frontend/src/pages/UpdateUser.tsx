@@ -66,7 +66,7 @@ export const UpdateUser = () => {
                     },
                 }
             );
-            navigate("/profile"); // Redirect to profile page after successful update
+            alert("Profile updated successfully!");
         } catch (err) {
             if (axios.isAxiosError(err)) {
                 setError(err.response?.data?.error || "Failed to update profile.");

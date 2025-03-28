@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@_prasadk_/inspirewrite-common": "^5.0.0",
+    "@_prasadk_/inspirewrite-common": "^5.0.1",
     "@tailwindcss/vite": "^4.0.4",
     "axios": "^1.7.9",
     "dotenv": "^16.4.7",
