@@ -116,3 +116,7 @@ userRouter.get('/', async (c) => {
 	});
 	return c.json({ id: me?.id, name: me?.name , occupation: me?.occupation , bio: me?.bio });
 })
+
+userRouter.put('/', async (c) => {
+		
+})
