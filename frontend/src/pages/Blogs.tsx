@@ -13,41 +13,41 @@ export const Blogs = () => {
     setQuery(newQuery);
   };
 
-  if (loading) {
-    return (
-      <div>
-        <Appbar />
-        <div className="flex justify-center">
-          <div>
-            <BlogSkeleton />
-            <BlogSkeleton />
-            <BlogSkeleton />
-            <BlogSkeleton />
-            <BlogSkeleton />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div>
       <Appbar />
-      <div className="flex justify-center">
-        <div>
+      <div className="flex justify-center pt-6">
+        <div className="w-full max-w-screen-lg px-4">
+          {/* Search Bar */}
           <SearchBar onSearch={handleSearch} />
-          {blogs.map((blog) => (
-            <BlogCard
-              key={blog.id}
-              id={blog.id}
-              authorName={blog.author.name || "Anonymous"}
-              title={blog.title}
-              content={blog.content}
-              publishedDate={blog.publishedAt || "--/--/----"}
-              occupation={blog.author.occupation}
-              area={blog.area}
-            />
-          ))}
+
+          {/* Blog List */}
+          {loading ? (
+            <div className="space-y-4">
+              {[...Array(5)].map((_, index) => (
+                <BlogSkeleton key={index} />
+              ))}
+            </div>
+          ) : blogs.length > 0 ? (
+            <div className="space-y-4">
+              {blogs.map((blog) => (
+                <BlogCard
+                  key={blog.id}
+                  id={blog.id}
+                  authorName={blog.author.name || "Anonymous"}
+                  title={blog.title}
+                  content={blog.content}
+                  publishedDate={blog.publishedAt || "--/--/----"}
+                  occupation={blog.author.occupation}
+                  area={blog.area}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center text-gray-500 mt-10">
+              No blogs found. Try searching for something else.
+            </div>
+          )}
         </div>
       </div>
     </div>
