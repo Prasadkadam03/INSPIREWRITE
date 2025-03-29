@@ -40,9 +40,11 @@ export const Publish = () => {
     return (
         <div>
             <Appbar />
-            <div className="flex justify-center w-full pt-8">
+            <div className="flex justify-center w-full pt-8 px-4">
                 <div className="max-w-screen-lg w-full">
-                    <h1 className="text-3xl font-extrabold mb-6 text-center">Publish a Blog</h1>
+                    <h1 className="text-2xl md:text-3xl font-extrabold mb-6 text-center">
+                        Publish a Blog
+                    </h1>
                     {error && <p className="text-red-500 text-center mb-4">{error}</p>}
                     <LabelledInput
                         label="Title"
@@ -64,7 +66,7 @@ export const Publish = () => {
                         onClick={handlePublish}
                         type="button"
                         disabled={loading}
-                        className="mt-4 w-full text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-200 font-medium rounded-lg text-sm px-5 py-2.5"
+                        className="mt-4 w-full text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5"
                     >
                         {loading ? "Publishing..." : "Publish Post"}
                     </button>

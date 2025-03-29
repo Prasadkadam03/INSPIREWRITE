@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 
 const useDebounce = (value: string, delay: number) => {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -17,24 +17,23 @@ const useDebounce = (value: string, delay: number) => {
 };
 
 export const SearchBar = ({ onSearch }: { onSearch: (query: string) => void }) => {
-  const [query, setQuery] = useState('');
-  const debouncedQuery = useDebounce(query, 200);
+  const [query, setQuery] = useState("");
+  const debouncedQuery = useDebounce(query, 300);
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setQuery(event.target.value || ' ');
+    setQuery(event.target.value.trim());
   };
 
   useEffect(() => {
-    if (debouncedQuery) {
-      onSearch(debouncedQuery);
-    }
+    onSearch(debouncedQuery);
   }, [debouncedQuery, onSearch]);
 
   return (
-    <div className="p-4 border-b border-slate-200 pb-4 w-screen max-w-screen-md cursor-pointer">
+    <div className="p-4 border-b border-gray-200 w-full max-w-screen-lg mx-auto">
       <input
         type="text"
-        placeholder="Search Here..."
-        className="w-full px-2 py-1 border rounded border-slate-200"
+        placeholder="Search blogs..."
+        className="w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
         value={query}
         onChange={handleInputChange}
       />
