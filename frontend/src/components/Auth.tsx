@@ -44,16 +44,15 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
     };
 
     return (
-        <div className="h-screen flex justify-center items-center">
-            <div className="w-full max-w-md">
-                <div className="px-10">
-                    <h1 className="text-3xl font-extrabold mb-2 text-center">
+        <div className="h-screen flex justify-center items-center bg-gray-50 px-4">
+            <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6">
+                <div className="text-center">
+                    <h1 className="text-2xl md:text-3xl font-extrabold mb-4">
                         {type === "signup" ? "Create an account" : "Sign in to your account"}
                     </h1>
-                    
                 </div>
                 {error && <p className="text-red-500 text-center mt-4">{error}</p>}
-                <div className="">
+                <div>
                     {type === "signup" && (
                         <LabelledInput
                             label="Name"
@@ -96,7 +95,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
                         value={postInputs.password}
                         onChange={handleChange}
                     />
-                    <p className="text-slate-500 flex justify-center items-center pt-4">
+                    <p className="text-slate-500 flex justify-center items-center pt-4 text-sm">
                         {type === "signin" ? "Don't have an account?" : "Already have an account?"}
                         <Link
                             className="pl-2 underline text-blue-600 hover:text-blue-800"
@@ -109,7 +108,7 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
                         onClick={sendRequest}
                         type="button"
                         disabled={loading}
-                        className="mt-8 w-full text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-1 py-2.5"
+                        className="mt-6 w-full text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5"
                     >
                         {loading ? "Processing..." : type === "signup" ? "Sign up" : "Sign in"}
                     </button>
@@ -137,8 +136,8 @@ const LabelledInput = ({
     type = "text",
 }: LabelledInputProps) => {
     return (
-        <div>
-            <label className="block mb-2 text-sm text-black font-semibold pt-4">{label}</label>
+        <div className="mt-4">
+            <label className="block mb-2 text-sm text-gray-700 font-semibold">{label}</label>
             <input
                 name={name}
                 value={value}

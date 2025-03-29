@@ -21,52 +21,56 @@ export const BlogCard = ({
     area,
 }: BlogCardProps) => {
     return (
-        <Link to={`/blog/${id}`}>
-            <div className="p-4 border-b border-slate-200 w-screen max-w-screen-md cursor-pointer hover:bg-gray-50 transition">
+        <div>
+            <Link to={`/blog/${id}`}>
+            <div className="p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow bg-white max-w-screen-md mx-auto">
                 {/* Header Section */}
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-3">
                     <Avatar name={authorName} />
-                    <span className="font-light text-sm">{authorName}</span>
-                    <Circle />
-                    <span className="font-thin text-blue-900 text-sm">{occupation}</span>
-                    <Circle />
-                    <span className="font-thin text-slate-500 text-sm">{formatDate(publishedDate)}</span>
+                    <div>
+                        <div className="text-sm font-medium text-gray-800">{authorName}</div>
+                        <div className="text-xs text-gray-500">{occupation}</div>
+                    </div>
                 </div>
 
                 {/* Title Section */}
-                <div className="text-xl font-semibold pt-2">{title}</div>
+                <div className="mt-4 text-2xl font-bold text-gray-900">{title}</div>
 
                 {/* Content Preview */}
-                <div className="text-md font-thin text-gray-700 pt-2">
-                    {content.slice(0, 100) + "..."}
+                <div className="mt-2 text-sm text-gray-700 leading-relaxed">
+                    {content.slice(0, 120)}...
                 </div>
 
                 {/* Footer Section */}
-                <div className="flex items-center space-x-2 pt-4 text-sm text-slate-500">
-                    <span>{`${Math.ceil(content.length / 100)} minute(s) read`}</span>
-                    <Circle />
-                    <span className="font-thin text-red-900">{area}</span>
+                <div className="flex items-center justify-between mt-4 text-sm text-gray-500">
+                    <div className="flex items-center space-x-2">
+                        <span>{`${Math.ceil(content.length / 100)} min read`}</span>
+                        <Circle />
+                        <span className="text-red-600">{area}</span>
+                    </div>
+                    <span>{formatDate(publishedDate)}</span>
                 </div>
             </div>
         </Link>
+        </div>
     );
 };
 
 export function Circle() {
-    return <div className="h-1 w-1 rounded-full bg-slate-500"></div>;
+    return <div className="h-1 w-1 rounded-full bg-gray-400"></div>;
 }
 
 export function Avatar({ name, size = "small" }: { name: string; size?: "small" | "big" }) {
     return (
         <div
             className={`relative inline-flex items-center justify-center overflow-hidden bg-gray-600 rounded-full ${
-                size === "small" ? "w-6 h-6" : "w-10 h-10"
+                size === "small" ? "w-8 h-8" : "w-12 h-12"
             }`}
         >
             <span
                 className={`${
-                    size === "small" ? "text-xs" : "text-md"
-                } font-extralight text-gray-100`}
+                    size === "small" ? "text-sm" : "text-lg"
+                } font-semibold text-gray-100`}
             >
                 {name[0].toUpperCase()}
             </span>
