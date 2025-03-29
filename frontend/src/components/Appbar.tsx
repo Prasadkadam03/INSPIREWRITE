@@ -7,7 +7,6 @@ export const Appbar = () => {
 
     return (
         <div className="border-b flex justify-between items-center px-10 py-4 bg-white shadow-sm">
-            {/* Logo Section */}
             <Link
                 to="/blogs"
                 className="text-4xl font-bold text-red-700 hover:text-red-900 transition-colors"
@@ -15,9 +14,7 @@ export const Appbar = () => {
                 InspireWrite
             </Link>
 
-            {/* Actions Section */}
             <div className="flex items-center space-x-4">
-                {/* New Blog Button */}
                 <Link to="/publish">
                     <button
                         type="button"
@@ -27,7 +24,6 @@ export const Appbar = () => {
                     </button>
                 </Link>
 
-                {/* User Avatar */}
                 <Link to="/UpdateUser">
                     <Avatar size="big" name={loading ? "..." : name || "Guest"} />
                 </Link>
