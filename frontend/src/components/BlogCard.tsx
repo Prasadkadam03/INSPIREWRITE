@@ -24,7 +24,6 @@ export const BlogCard = ({
         <div>
             <Link to={`/blog/${id}`}>
             <div className="p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow bg-white max-w-screen-md mx-auto">
-                {/* Header Section */}
                 <div className="flex items-center space-x-3">
                     <Avatar name={authorName} />
                     <div>
@@ -33,15 +32,12 @@ export const BlogCard = ({
                     </div>
                 </div>
 
-                {/* Title Section */}
                 <div className="mt-4 text-2xl font-bold text-gray-900">{title}</div>
 
-                {/* Content Preview */}
                 <div className="mt-2 text-sm text-gray-700 leading-relaxed">
                     {content.slice(0, 120)}...
                 </div>
 
-                {/* Footer Section */}
                 <div className="flex items-center justify-between mt-4 text-sm text-gray-500">
                     <div className="flex items-center space-x-2">
                         <span>{`${Math.ceil(content.length / 100)} min read`}</span>
