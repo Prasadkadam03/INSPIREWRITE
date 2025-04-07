@@ -3,6 +3,7 @@ import axios from "axios";
 import { updateUserInput } from "@_prasadk_/inspirewrite-common";
 import { BACKEND_URL } from "../config";
 import { Appbar } from "../components/Appbar";
+import { ArrowLeft } from "lucide-react";
 
 export const UpdateUser = () => {
     const [formData, setFormData] = useState({
@@ -13,7 +14,6 @@ export const UpdateUser = () => {
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
-    // Fetch user data on component mount
     useEffect(() => {
         const fetchUserData = async () => {
             try {
@@ -77,7 +77,7 @@ export const UpdateUser = () => {
 
     return (
         <div>
-            <Appbar />
+            <Appbar button={<ArrowLeft/>} />
             <div className="h-screen flex justify-center items-center bg-gray-100">
                 <div className="w-full max-w-md pb-100">
                     <h1 className="text-3xl font-extrabold text-center mb-6">Update Your Profile</h1>
