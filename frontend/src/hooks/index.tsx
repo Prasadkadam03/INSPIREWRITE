@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
+import { useNavigate } from "react-router-dom";
 
 export interface Blog {
     content: string;
@@ -21,6 +22,7 @@ export interface Blog {
 export const useUserName = () => {
     const [name, setName] = useState<string>("");
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         axios
@@ -34,6 +36,7 @@ export const useUserName = () => {
             })
             .catch(() => {
                 setName("Anonymous");
+                navigate("/signin");
             })
             .finally(() => {
                 setLoading(false);

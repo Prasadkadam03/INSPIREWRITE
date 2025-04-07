@@ -40,7 +40,7 @@ export const BlogCard = ({
 
                 <div className="flex items-center justify-between mt-4 text-sm text-gray-500">
                     <div className="flex items-center space-x-2">
-                        <span>{`${Math.ceil(content.length / 100)} min read`}</span>
+                        <span>{`${Math.ceil(content.length / 200)} min read`}</span>
                         <Circle />
                         <span className="text-red-600">{area}</span>
                     </div>
