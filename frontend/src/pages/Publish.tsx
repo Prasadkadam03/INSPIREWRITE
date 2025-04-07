@@ -3,6 +3,7 @@ import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { useNavigate } from "react-router-dom";
 import { ChangeEvent, useState } from "react";
+import { ArrowLeft } from "lucide-react";
 
 export const Publish = () => {
     const [title, setTitle] = useState("");
@@ -40,7 +41,8 @@ export const Publish = () => {
 
     return (
         <div>
-            <Appbar />
+            <Appbar button={<ArrowLeft/>} />
+            
             <div className="flex justify-center w-full pt-8 px-4">
                 <div className="max-w-screen-lg w-full">
                     <h1 className="text-2xl md:text-3xl font-extrabold mb-6 text-center">

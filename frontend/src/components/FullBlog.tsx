@@ -2,19 +2,25 @@ import { useBlog } from "../hooks";
 import { Appbar } from "./Appbar";
 import { Avatar, Circle } from "./BlogCard";
 import { formatDate } from "./FormatDate";
-import { ThumbsUp } from "lucide-react"; // Import the ThumbsUp icon
+import { ThumbsUp } from "lucide-react"; 
+import { ArrowLeft } from "lucide-react";
+import { FullBlogSkeleton } from "./FullBlogSkeleton";
+
 
 export const FullBlog = ({ blogId }: { blogId: string }) => {
     const { loading, blog, likes, liked, handleLike } = useBlog({ id: blogId });
 
-    if (loading) return <p className="text-center text-gray-500 mt-10">Loading...</p>;
+    if (loading) return <div>
+        <Appbar/>
+        <FullBlogSkeleton/>
+    </div>
 
     return (
         <div>
-            <Appbar />
+            <Appbar button={<ArrowLeft/>} />
+
             <div className="flex justify-center bg-gray-50 min-h-screen">
                 <div className="grid grid-cols-12 w-full max-w-screen-xl pt-12 px-4 lg:px-10">
-                    {/* Blog Content Section */}
                     <div className="col-span-12 lg:col-span-8 bg-white shadow-md rounded-lg p-6">
                         {blog && <h1 className="text-4xl lg:text-5xl font-extrabold text-gray-800">{blog.title}</h1>}
                         <div className="flex items-center pt-4 text-sm text-slate-500">
@@ -28,7 +34,6 @@ export const FullBlog = ({ blogId }: { blogId: string }) => {
                         <div className="pt-6 text-lg text-gray-700 leading-relaxed">
                             {blog?.content}
                         </div>
-                        {/* Like Button */}
                         <div className="pt-6 flex items-center space-x-4">
                             <button
                                 onClick={handleLike}
@@ -51,7 +56,6 @@ export const FullBlog = ({ blogId }: { blogId: string }) => {
                         </div>
                     </div>
 
-                    {/* Author Section */}
                     <div className="col-span-12 lg:col-span-4 lg:pl-10 pt-10 lg:pt-0">
                         <div className="bg-white shadow-md rounded-lg p-6">
                             <div className="text-slate-600 text-lg font-semibold mb-4">Author</div>
