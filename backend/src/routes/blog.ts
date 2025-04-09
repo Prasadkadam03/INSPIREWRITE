@@ -164,10 +164,11 @@ blogRouter.get('/bulk', async (c) => {
     blogsByUser.concat(blogsByContent).forEach((blog) => {
         blogsMap.set(blog.id, blog);
     });
-    const blogs = Array.from(blogsMap.values());
+    const blogs = Array.from(blogsMap.values()).sort((a, b) => b._count.likes - a._count.likes);
     return c.json({
         blogs,
     });
+
 });
 
 blogRouter.get('/:id', async (c) => {
@@ -204,6 +205,7 @@ blogRouter.get('/:id', async (c) => {
             c.status(404);
             return c.json({ error: "Blog not found" });
         }
+
         return c.json({
             blog,
         });
@@ -341,5 +343,4 @@ blogRouter.get('/:id/liked', async (c) => {
         return c.json({ error: "Error checking like status." });
     }
 });
-
 
