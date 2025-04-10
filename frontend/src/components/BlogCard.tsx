@@ -24,40 +24,38 @@ export const BlogCard = ({
     likes,
 }: BlogCardProps) => {
     return (
-        <div>
+        <div className="p-4 sm:p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow bg-white max-w-screen-md mx-auto">
             <Link to={`/blog/${id}`}>
-                <div className="p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow bg-white max-w-screen-md mx-auto">
-                    {/* Author Info */}
-                    <div className="flex items-center space-x-3">
-                        <Avatar name={authorName} />
-                        <div>
-                            <div className="text-sm font-medium text-gray-800">{authorName}</div>
-                            <div className="text-xs text-gray-500">{occupation}</div>
+                {/* Author Info */}
+                <div className="flex items-center space-x-3">
+                    <Avatar name={authorName} />
+                    <div>
+                        <div className="text-sm font-medium text-gray-800">{authorName}</div>
+                        <div className="text-xs text-gray-500">{occupation}</div>
+                    </div>
+                </div>
+
+                {/* Blog Title */}
+                <div className="mt-4 text-lg sm:text-xl font-bold text-gray-900">{title}</div>
+
+                {/* Blog Content Preview */}
+                <div className="mt-2 text-sm text-gray-700 leading-relaxed">
+                    {content.slice(0, 120)}...
+                </div>
+
+                {/* Blog Metadata */}
+                <div className="flex flex-wrap items-center justify-between mt-4 text-sm text-gray-500">
+                    <div className="flex items-center space-x-2">
+                        <span>{`${Math.ceil(content.length / 200)} min read`}</span>
+                        <Circle />
+                        <div className="flex items-center space-x-1">
+                            <ThumbsUp size={16} className="text-gray-500" />
+                            <span>{likes || 0}</span>
                         </div>
                     </div>
-
-                    {/* Blog Title */}
-                    <div className="mt-4 text-2xl font-bold text-gray-900">{title}</div>
-
-                    {/* Blog Content Preview */}
-                    <div className="mt-2 text-sm text-gray-700 leading-relaxed">
-                        {content.slice(0, 120)}...
-                    </div>
-
-                    {/* Blog Metadata */}
-                    <div className="flex items-center justify-between mt-4 text-sm text-gray-500">
-                        <div className="flex items-center space-x-2">
-                            <span>{`${Math.ceil(content.length / 200)} min read`}</span>
-                            <Circle />
-                            <div className="flex items-center space-x-1">
-                                <ThumbsUp size={16} className="text-gray-500" />
-                                <span>{likes || 0}</span>
-                            </div>
-                        </div>
-                        <div>
-                            <span className="text-red-600">{area}</span>
-                            <span className="ml-2">{formatDate(publishedDate)}</span>
-                        </div>
+                    <div className="flex items-center space-x-2 mt-2 sm:mt-0">
+                        <span className="text-red-600">{area}</span>
+                        <span className="ml-2">{formatDate(publishedDate)}</span>
                     </div>
                 </div>
             </Link>
@@ -73,12 +71,12 @@ export function Avatar({ name, size = "small" }: { name: string; size?: "small" 
     return (
         <div
             className={`relative inline-flex items-center justify-center overflow-hidden bg-gray-600 rounded-full ${
-                size === "small" ? "w-8 h-8" : "w-12 h-12"
+                size === "small" ? "w-6 h-6 sm:w-8 sm:h-8" : "w-10 h-10 sm:w-12 sm:h-12"
             }`}
         >
             <span
                 className={`${
-                    size === "small" ? "text-sm" : "text-lg"
+                    size === "small" ? "text-xs sm:text-sm" : "text-sm sm:text-base"
                 } font-semibold text-gray-100`}
             >
                 {name[0].toUpperCase()}

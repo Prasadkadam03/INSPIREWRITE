@@ -47,11 +47,9 @@ export const FullBlog = ({ blogId }: { blogId: string }) => {
             <div className="flex justify-center bg-gray-50 min-h-screen">
                 <div className="grid grid-cols-12 w-full max-w-screen-xl pt-12 px-4 lg:px-10">
                     <div className="col-span-12 lg:col-span-8 bg-white shadow-md rounded-lg p-6">
-                        {blog && (
-                            <h1 className="text-4xl lg:text-5xl font-extrabold text-gray-800">
-                                {blog.title}
-                            </h1>
-                        )}
+                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-800">
+                            {blog?.title}
+                        </h1>
                         <div className="flex items-center pt-4 text-sm text-slate-500">
                             <span>{formatDate(blog?.publishedAt || "")}</span>
                             <div className="px-2" />
@@ -60,40 +58,39 @@ export const FullBlog = ({ blogId }: { blogId: string }) => {
                             <Circle />
                             <span className="text-red-500 px-2">{blog?.area}</span>
                         </div>
-                        <div className="pt-6 text-lg text-gray-700 leading-relaxed">
+                        <div className="pt-6 text-base md:text-lg text-gray-700 leading-relaxed">
                             {blog?.content}
                         </div>
-                        <div className="pt-6 flex justify-between items-center">
-                            <div className="pt-6 flex items-center space-x-4">
-                                <button
-                                    onClick={handleLike}
-                                    className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${liked
-                                            ? "bg-blue-600 text-white hover:bg-blue-700"
-                                            : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                                        }`}
-                                >
-                                    <ThumbsUp
-                                        className={`w-5 h-5 mr-2 ${liked ? "text-white" : "text-gray-800"
-                                            }`}
-                                    />
-                                    {liked ? "Liked" : "Like"}
-                                </button>
-                                <span className="text-gray-600 text-sm">
-                                    {likes} {likes === 1 ? "Like" : "Likes"}
-                                </span>
-                            </div>
-                            {isAuthor && (
-                                <div className="pt-6">
-                                    <button
-                                        onClick={handleDelete}
-                                        className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-                                    >
-                                        Delete Blog
-                                    </button>
-                                </div>
-                            )}
+                        <div className="pt-6 flex items-center space-x-4">
+                            <button
+                                onClick={handleLike}
+                                className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                                    liked
+                                        ? "bg-blue-600 text-white hover:bg-blue-700"
+                                        : "bg-gray-200 text-gray-800 hover:bg-gray-300"
+                                }`}
+                            >
+                                <ThumbsUp
+                                    className={`w-5 h-5 mr-2 ${
+                                        liked ? "text-white" : "text-gray-800"
+                                    }`}
+                                />
+                                {liked ? "Liked" : "Like"}
+                            </button>
+                            <span className="text-gray-600 text-sm">
+                                {likes} {likes === 1 ? "Like" : "Likes"}
+                            </span>
                         </div>
-
+                        {isAuthor && (
+                            <div className="pt-6">
+                                <button
+                                    onClick={handleDelete}
+                                    className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+                                >
+                                    Delete Blog
+                                </button>
+                            </div>
+                        )}
                     </div>
                     <div className="col-span-12 lg:col-span-4 lg:pl-10 pt-10 lg:pt-0">
                         <div className="bg-white shadow-md rounded-lg p-6">
