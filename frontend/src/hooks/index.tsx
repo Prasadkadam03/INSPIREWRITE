@@ -55,6 +55,7 @@ export const useBlog = ({ id }: { id: string }) => {
     const [blog, setBlog] = useState<Blog>();
     const [likes, setLikes] = useState<number>(0);
     const [liked, setLiked] = useState(false);
+    const navigate = useNavigate(); 
 
     useEffect(() => {
         const fetchBlog = async () => {
@@ -73,16 +74,17 @@ export const useBlog = ({ id }: { id: string }) => {
                         Authorization: localStorage.getItem("token"),
                     },
                 });
-                setLiked(likedResponse.data.liked); 
+                setLiked(likedResponse.data.liked);
             } catch (error) {
                 console.error("Error fetching blog:", error);
+                navigate("/"); // Redirect to home page on error
             } finally {
                 setLoading(false);
             }
         };
 
         fetchBlog();
-    }, [id]);
+    }, [id, navigate]);
 
     const handleLike = async () => {
         try {
