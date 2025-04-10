@@ -11,6 +11,7 @@ export interface Blog {
         name: string;
         occupation: string;
         bio: string;
+        id: string;
     };
     publishedAt: string;
     area: string;
@@ -21,6 +22,7 @@ export interface Blog {
 
 export const useUserName = () => {
     const [name, setName] = useState<string>("");
+    const [userId, setUserId] = useState<string>("");
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
@@ -33,6 +35,8 @@ export const useUserName = () => {
             })
             .then((response) => {
                 setName(response.data.name || "Anonymous");
+                setUserId(response.data.id || "");
+                localStorage.setItem("userId", response.data.id || "");
             })
             .catch(() => {
                 setName("Anonymous");
@@ -43,7 +47,7 @@ export const useUserName = () => {
             });
     }, []);
 
-    return { loading, name };
+    return { loading, name,userId };
 };
 
 export const useBlog = ({ id }: { id: string }) => {
@@ -135,7 +139,7 @@ export const useBlogs = ({ query }: { query: string }) => {
                             content: "",
                             title: "No blogs available with search content",
                             id: "",
-                            author: { name: "", occupation: "", bio: "" },
+                            author: { name: "", occupation: "", bio: "" , id: "" },
                             publishedAt: new Date().toISOString(),
                             area: "",
                             _count: { likes: 0 }, 

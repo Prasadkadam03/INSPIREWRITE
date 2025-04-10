@@ -188,6 +188,7 @@ blogRouter.get('/:id', async (c) => {
                 area: true,
                 author: {
                     select: {
+                        id: true,
                         name: true,
                         occupation: true,
                         bio: true,
@@ -341,6 +342,44 @@ blogRouter.get('/:id/liked', async (c) => {
         console.error("Error checking like status:", error);
         c.status(500);
         return c.json({ error: "Error checking like status." });
+    }
+});
+
+blogRouter.delete('/:id', async (c) => {
+    const postId = c.req.param("id");
+    const userId = c.get("userId");
+    const prisma = new PrismaClient({
+        datasources: {
+            db: {
+                url: c.env.DATABASE_URL,
+            },
+        },
+    }).$extends(withAccelerate());
+
+    try {
+        const blog = await prisma.post.findUnique({
+            where: { id: postId },
+        });
+
+        if (!blog) {
+            c.status(404);
+            return c.json({ error: "Blog not found" });
+        }
+
+        if (blog.authorId !== userId) {
+            c.status(403);
+            return c.json({ error: "You are not authorized to delete this blog." });
+        }
+
+        await prisma.post.delete({
+            where: { id: postId },
+        });
+
+        return c.json({ message: "Blog deleted successfully." });
+    } catch (error) {
+        console.error("Error deleting blog:", error);
+        c.status(500);
+        return c.json({ error: "Error deleting blog." });
     }
 });
 
