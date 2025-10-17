@@ -78,7 +78,7 @@ export const UpdateUser = () => {
     return (
         <div>
             <Appbar button={<ArrowLeft/>} />
-            <div className="h-screen flex justify-center items-center bg-gray-100">
+            <div className="h-screen flex justify-center items-center">
                 <div className="w-full max-w-md pb-100">
                     <h1 className="text-3xl font-extrabold text-center mb-6">Update Your Profile</h1>
                     {error && <p className="text-red-500 text-center mb-4">{error}</p>}
@@ -147,7 +147,7 @@ const LabelledInput = ({
                     name={name}
                     value={value}
                     onChange={onChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     placeholder={placeholder}
                     rows={4}
                 />
@@ -157,7 +157,7 @@ const LabelledInput = ({
                     name={name}
                     value={value}
                     onChange={onChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                    className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
                     placeholder={placeholder}
                 />
             )}

@@ -24,7 +24,7 @@ export const BlogCard = ({
     likes,
 }: BlogCardProps) => {
     return (
-        <div className="p-4 sm:p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow bg-white max-w-screen-md mx-auto">
+        <div className="p-4 sm:p-6 rounded-lg drop-shadow-xl hover:drop-shadow-2xl hover:shadow-xl transition-shadow bg-white max-w-screen-md mx-auto">
             <Link to={`/blog/${id}`}>
                 {/* Author Info */}
                 <div className="flex items-center space-x-3">

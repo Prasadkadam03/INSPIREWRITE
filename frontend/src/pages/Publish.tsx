@@ -122,7 +122,7 @@ function LabelledInput({
                 type="text"
                 value={value}
                 onChange={onChange}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                 placeholder={placeholder}
                 required
             />
@@ -144,7 +144,7 @@ function TextEditor({
                 value={value}
                 onChange={onChange}
                 rows={8}
-                className="w-full bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                className="w-full bg-white border  border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                 placeholder="Write your blog content here..."
                 required
             />

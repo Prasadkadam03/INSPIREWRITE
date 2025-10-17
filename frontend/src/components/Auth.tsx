@@ -45,8 +45,8 @@ export const Auth = ({ type }: { type: "signup" | "signin" }) => {
     };
 
     return (
-        <div className="h-screen flex justify-center items-center bg-gray-50 px-4">
-            <div className="w-full max-w-md bg-white shadow-md rounded-lg p-6">
+        <div className="h-screen flex justify-center  shadow-2xl  items-center px-4">
+            <div className="w-full max-w-md bg-white shadow-2xl rounded-lg p-6">
                 <div className="text-center">
                     <h1 className="text-2xl md:text-3xl font-extrabold mb-4">
                         {type === "signup" ? "Create an Account" : "Sign in to Your Account"}
