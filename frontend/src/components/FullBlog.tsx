@@ -44,9 +44,9 @@ export const FullBlog = ({ blogId }: { blogId: string }) => {
         <div>
             <Appbar button={<ArrowLeft />} />
 
-            <div className="flex justify-center bg-gray-50 min-h-screen">
+            <div className="flex justify-center min-h-screen">
                 <div className="grid grid-cols-12 w-full max-w-screen-xl pt-12 px-4 lg:px-10">
-                    <div className="col-span-12 lg:col-span-8 bg-white shadow-md rounded-lg p-6">
+                    <div className="col-span-12 lg:col-span-8 bg-white shadow-lg rounded-lg p-6">
                         <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-800">
                             {blog?.title}
                         </h1>
