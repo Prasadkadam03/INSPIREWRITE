@@ -4,18 +4,45 @@ import { BACKEND_URL } from "../config";
 import { useNavigate } from "react-router-dom";
 import { ChangeEvent, useState } from "react";
 import { ArrowLeft } from "lucide-react";
+import DOMPurify from "dompurify";
+import LexicalRichTextEditor from "../components/LexicalRichTextEditor";
 
 export const Publish = () => {
     const [title, setTitle] = useState("");
-    const [content, setContent] = useState("");
+    const [content, setContent] = useState(""); // HTML from Lexical
     const [area, setArea] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
-    const [previewMode, setPreviewMode] = useState(false); // State to toggle preview mode
+    const [previewMode, setPreviewMode] = useState(false);
     const navigate = useNavigate();
+
+
+    const stripHtml = (html: string) =>
+        html
+            .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
+            .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, "")
+            .replace(/<[^>]+>/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
 
     const handlePublish = async () => {
         setError(null);
+
+        // ✅ client-side check to avoid 400s
+        const plain = stripHtml(content);
+        if (title.trim().length < 3) {
+            setError("Title must be at least 3 characters.");
+            return;
+        }
+        if (area.trim().length < 3) {
+            setError("Area must be at least 3 characters.");
+            return;
+        }
+        if (plain.length < 10) {
+            setError("Content must be at least 10 characters (excluding HTML).");
+            return;
+        }
+
         setLoading(true);
         try {
             const response = await axios.post(
@@ -23,6 +50,7 @@ export const Publish = () => {
                 { title, content, area },
                 {
                     headers: {
+                        // you asked to keep this as-is (no Bearer prefix)
                         Authorization: localStorage.getItem("token") || "",
                     },
                 }
@@ -30,7 +58,13 @@ export const Publish = () => {
             navigate(`/blog/${response.data.id}`);
         } catch (err) {
             if (axios.isAxiosError(err)) {
-                setError(err.response?.data?.error || "Failed to publish the blog.");
+                // surface server details if present
+                const details = (err.response?.data as any)?.details;
+                if (details) {
+                    setError(JSON.stringify(details));
+                } else {
+                    setError(err.response?.data?.error || "Failed to publish the blog.");
+                }
             } else {
                 setError("An unexpected error occurred.");
             }
@@ -39,21 +73,27 @@ export const Publish = () => {
         }
     };
 
+
     return (
         <div>
-            <Appbar button={<ArrowLeft/>} />
-            
-            <div className="flex justify-center w-full pt-8 px-4">
+            <Appbar button={<ArrowLeft />} />
+
+            <div className="flex h-auto justify-center w-full pt-8 px-4">
                 <div className="max-w-screen-lg w-full">
                     <h1 className="text-2xl md:text-3xl font-extrabold mb-6 text-center">
                         {previewMode ? "Preview Your Blog" : "Publish a Blog"}
                     </h1>
+
                     {error && <p className="text-red-500 text-center mb-4">{error}</p>}
+
                     {previewMode ? (
                         <div className="bg-white shadow-md rounded-lg p-6">
                             <h2 className="text-3xl font-bold text-gray-800">{title}</h2>
                             <p className="text-sm text-gray-500 mt-2">{area}</p>
-                            <div className="mt-4 text-gray-700 leading-relaxed">{content}</div>
+                            <div
+                                className="mt-4 text-gray-700 leading-relaxed prose max-w-none"
+                                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
+                            />
                             <div className="flex justify-between mt-6">
                                 <button
                                     onClick={() => setPreviewMode(false)}
@@ -85,10 +125,16 @@ export const Publish = () => {
                                 placeholder="Enter the area of your blog (e.g., Technology, Health)"
                                 onChange={(e) => setArea(e.target.value)}
                             />
-                            <TextEditor
-                                value={content}
-                                onChange={(e) => setContent(e.target.value)}
-                            />
+
+                            <div className="mt-4">
+                                <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
+                                <LexicalRichTextEditor
+                                    initialHTML={content || ""}
+                                    onChange={setContent}
+                                    placeholder="Write your blog content here..."
+                                />
+                            </div>
+
                             <button
                                 onClick={() => setPreviewMode(true)}
                                 type="button"
@@ -124,28 +170,6 @@ function LabelledInput({
                 onChange={onChange}
                 className="w-full bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
                 placeholder={placeholder}
-                required
-            />
-        </div>
-    );
-}
-
-function TextEditor({
-    value,
-    onChange,
-}: {
-    value: string;
-    onChange: (e: ChangeEvent<HTMLTextAreaElement>) => void;
-}) {
-    return (
-        <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
-            <textarea
-                value={value}
-                onChange={onChange}
-                rows={8}
-                className="w-full bg-white border  border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-                placeholder="Write your blog content here..."
                 required
             />
         </div>
