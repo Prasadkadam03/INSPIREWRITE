@@ -1,88 +1,87 @@
-import { JSX, useState } from "react";
+import { type JSX, useEffect, useState } from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { LogOut, Menu, PenLine, X } from "lucide-react";
 import { useUserName } from "../hooks";
 import { Avatar } from "./BlogCard";
-import { Link, useNavigate } from "react-router-dom";
-import { Menu, X, PlusCircle } from "lucide-react";
+import { Brand, SkipLink } from "./BrandMark";
+import { ThemeToggle } from "./ThemeToggle";
+
+const navClass = ({ isActive }: { isActive: boolean }) =>
+    `relative py-1 text-sm font-medium transition-colors duration-300 after:absolute after:-bottom-0.5 after:left-0 after:h-px after:bg-accent after:transition-all after:duration-300 ${
+        isActive ? "text-ink after:w-full" : "text-muted after:w-0 hover:text-ink hover:after:w-full"
+    }`;
 
 export const Appbar = ({ button }: { button?: JSX.Element }) => {
     const { loading, name } = useUserName();
     const navigate = useNavigate();
+    const location = useLocation();
     const [menuOpen, setMenuOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => setMenuOpen(false), [location.pathname]);
+    useEffect(() => {
+        const onScroll = () => setScrolled(window.scrollY > 8);
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        navigate("/signin", { replace: true });
+    };
+
+    const displayName = loading ? "…" : name || "Guest";
 
     return (
-        <div className="mb-12">
-            <header className="border px-5 rounded-full border-gray-100 bg-gray-100/50 backdrop-blur-sm fixed top-2  w-full z-10">
-                <div className="flex justify-between items-center px-4 py-3 md:px-6 md:py-4 max-w-screen-2xl mx-auto">
-                    {/* Left Section */}
-                    <div className="flex items-center space-x-4">
+        <>
+            <SkipLink />
+            <header className={`sticky top-0 z-40 border-b transition-[background-color,border-color,backdrop-filter] duration-300 ${scrolled || menuOpen ? "border-line bg-canvas/80 backdrop-blur-xl" : "border-transparent bg-transparent"}`}>
+                <div className="page-shell flex h-[4.5rem] items-center justify-between gap-4">
+                    <div className="flex min-w-0 items-center gap-3 lg:gap-10">
                         {button && (
-                            <button
-                                onClick={() => navigate(-1)}
-                                className="text-gray-600 hover:text-gray-800 transition-colors"
-                                aria-label="Go Back"
-                            >
+                            <button onClick={() => navigate(-1)} className="icon-button -ml-2 shrink-0" aria-label="Go back">
                                 {button}
                             </button>
                         )}
-                        <Link
-                            to="/blogs"
-                            className="text-xl font-bold text-red-700 hover:text-red-900 transition-colors md:text-2xl"
-                        >
-                            InspireWrite
-                        </Link>
+                        <Brand />
+                        <nav className="hidden items-center gap-7 md:flex" aria-label="Primary navigation">
+                            <NavLink to="/blogs" className={navClass}>Read</NavLink>
+                            <NavLink to="/publish" className={navClass}>Write</NavLink>
+                        </nav>
                     </div>
 
-                    <div className="flex items-center space-x-4">
-                        {/* Desktop Buttons */}
-                        <div className="hidden md:flex items-center space-x-4">
-                            <Link to="/publish">
-                                <button
-                                    type="button"
-                                    className="flex items-center space-x-2 text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-4 focus:ring-green-300 font-medium rounded-full text-xs px-3 py-1.5 md:px-4 md:py-2 transition"
-                                >
-                                    <PlusCircle size={16} />
-                                    <span>New</span>
-                                </button>
-                            </Link>
-                            <Link to="/UpdateUser">
-                                <Avatar size="small" name={loading ? "..." : name || "Guest"} />
-                            </Link>
-                        </div>
+                    <div className="hidden items-center gap-1.5 md:flex">
+                        <Link to="/publish" className="button-primary mr-2 !min-h-10"><PenLine size={15} />Write</Link>
+                        <ThemeToggle />
+                        <Link to="/updateUser" className="rounded-full p-1" aria-label="Open profile settings">
+                            <Avatar name={displayName} />
+                        </Link>
+                        <button type="button" onClick={handleLogout} className="icon-button" aria-label="Log out" title="Log out">
+                            <LogOut size={17} />
+                        </button>
+                    </div>
 
-                        {/* Mobile Menu Button */}
-                        <button
-                            className="md:hidden text-gray-600 hover:text-gray-800"
-                            onClick={() => setMenuOpen(!menuOpen)}
-                            aria-label="Toggle Menu"
-                        >
-                            {menuOpen ? <X size={24} /> : <Menu size={24} />}
+                    <div className="flex items-center gap-1 md:hidden">
+                        <ThemeToggle />
+                        <button className="icon-button" onClick={() => setMenuOpen((open) => !open)} aria-label={menuOpen ? "Close menu" : "Open menu"} aria-expanded={menuOpen} aria-controls="mobile-navigation">
+                            {menuOpen ? <X size={20} /> : <Menu size={20} />}
                         </button>
                     </div>
                 </div>
 
                 {menuOpen && (
-                    <div className="md:hidden  shadow-md border-t  border-gray-100 bg-gray-100/50 backdrop-blur-smrounded-md">
-                        <nav className="flex flex-col space-y-2 px-4 py-3">
-                            <Link
-                                to="/publish"
-                                className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 transition-colors"
-                                onClick={() => setMenuOpen(false)}
-                            >
-                                <PlusCircle size={16} />
-                                <span>New Blog</span>
-                            </Link>
-                            <Link
-                                to="/UpdateUser"
-                                className="flex items-center space-x-2 text-gray-700 hover:text-gray-900 transition-colors"
-                                onClick={() => setMenuOpen(false)}
-                            >
-                                <Avatar size="small" name={loading ? "..." : name || "Guest"} />
-                                <span>Profile</span>
-                            </Link>
-                        </nav>
-                    </div>
+                    <nav id="mobile-navigation" className="drop border-t border-line px-5 pb-5 md:hidden" aria-label="Mobile navigation">
+                        <div className="mx-auto flex max-w-6xl flex-col">
+                            <Link to="/blogs" className="border-b border-line py-3 text-base font-medium">Read</Link>
+                            <Link to="/publish" className="border-b border-line py-3 text-base font-medium">Write</Link>
+                            <Link to="/updateUser" className="flex items-center gap-3 border-b border-line py-4 text-sm font-semibold"><Avatar name={displayName} />Profile settings</Link>
+                            <button type="button" onClick={handleLogout} className="flex items-center gap-3 py-4 text-left text-sm font-semibold text-accent"><LogOut size={17} />Log out</button>
+                        </div>
+                    </nav>
                 )}
             </header>
-        </div>
+        </>
     );
 };
