@@ -1,174 +1,83 @@
-import { ChangeEvent, JSX, useState } from "react";
+import { type ChangeEvent, type FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { ArrowRight, LoaderCircle } from "lucide-react";
+import type { SignupInput } from "@_prasadk_/inspirewrite-common";
 import { BACKEND_URL } from "../config";
-import { SignupInput } from "@_prasadk_/inspirewrite-common";
-import { Mail, Lock, User, Briefcase, Info } from "lucide-react";
+import { Brand, SkipLink } from "./BrandMark";
+import { ThemeToggle } from "./ThemeToggle";
 
 export const Auth = ({ type }: { type: "signup" | "signin" }) => {
     const navigate = useNavigate();
-    const [postInputs, setPostInputs] = useState<SignupInput>({
-        name: "",
-        email: "",
-        password: "",
-        occupation: "",
-        bio: "",
-    });
+    const [postInputs, setPostInputs] = useState<SignupInput>({ name: "", email: "", password: "", occupation: "", bio: "" });
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const isSignup = type === "signup";
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setPostInputs((prev) => ({ ...prev, [name]: value }));
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+        setPostInputs((current) => ({ ...current, [name]: value }));
     };
 
-    const sendRequest = async () => {
+    const sendRequest = async (event: FormEvent) => {
+        event.preventDefault();
         setError(null);
         setLoading(true);
         try {
-            const response = await axios.post(
-                `${BACKEND_URL}/api/v1/user/${type === "signup" ? "signup" : "signin"}`,
-                postInputs
-            );
-            const jwt = response.data.jwt;
-            localStorage.setItem("token", "Bearer " + jwt);
+            const response = await axios.post(`${BACKEND_URL}/api/v1/user/${isSignup ? "signup" : "signin"}`, postInputs);
+            localStorage.setItem("token", `Bearer ${response.data.jwt}`);
             navigate("/blogs");
-        } catch (e) {
-            if (axios.isAxiosError(e)) {
-                setError(e.response?.data?.error || "Something went wrong");
-            } else {
-                setError("Unexpected error occurred");
-            }
+        } catch (requestError) {
+            setError(axios.isAxiosError(requestError) ? requestError.response?.data?.error || "Your details could not be verified." : "The request could not be completed.");
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="h-screen flex justify-center  shadow-2xl  items-center px-4">
-            <div className="w-full max-w-md bg-white shadow-2xl rounded-lg p-6">
-                <div className="text-center">
-                    <h1 className="text-2xl md:text-3xl font-extrabold mb-4">
-                        {type === "signup" ? "Create an Account" : "Sign in to Your Account"}
-                    </h1>
-                </div>
-                {error && (
-                    <p className="text-red-500 text-center mt-4 bg-red-100 p-2 rounded">
-                        {error}
-                    </p>
-                )}
-                <div>
-                    {type === "signup" && (
-                        <LabelledInput
-                            label="Name"
-                            name="name"
-                            placeholder="Prasad Kadam"
-                            value={postInputs.name}
-                            onChange={handleChange}
-                            icon={<User size={18} />}
-                        />
+        <main id="main-content" className="flex min-h-screen min-w-0 flex-col px-5 py-6 sm:px-10 lg:px-14">
+            <SkipLink />
+            <div className="flex items-center justify-between">
+                <Brand to="/" />
+                <ThemeToggle />
+            </div>
+
+            <div key={type} className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center py-12">
+                <p className="eyebrow rise">{isSignup ? "Start writing" : "Welcome back"}</p>
+                <h1 className="headline rise d-1 mt-4 text-4xl">
+                    {isSignup ? <>Make room for your ideas.</> : <>Continue where you left off.</>}
+                </h1>
+
+                {error && <p role="alert" className="notice-error drop mt-8">{error}</p>}
+                <form onSubmit={sendRequest} className="rise d-2 mt-8 space-y-4">
+                    {isSignup && <Field label="Name" name="name" value={postInputs.name} onChange={handleChange} placeholder="Your name" autoComplete="name" minLength={3} />}
+                    <Field label="Email" name="email" type="email" value={postInputs.email} onChange={handleChange} placeholder="you@example.com" autoComplete="email" />
+                    {isSignup && (
+                        <div className="grid gap-4 sm:grid-cols-2">
+                            <Field label="Occupation" name="occupation" value={postInputs.occupation} onChange={handleChange} placeholder="Writer, student…" autoComplete="organization-title" minLength={3} />
+                            <Field label="Short bio" name="bio" value={postInputs.bio} onChange={handleChange} placeholder="What you write about" autoComplete="off" minLength={3} />
+                        </div>
                     )}
-                    <LabelledInput
-                        label="Email"
-                        name="email"
-                        placeholder="prasad@gmail.com"
-                        value={postInputs.email}
-                        onChange={handleChange}
-                        icon={<Mail size={18} />}
-                    />
-                    {type === "signup" && (
-                        <>
-                            <LabelledInput
-                                label="Occupation"
-                                name="occupation"
-                                placeholder="Student"
-                                value={postInputs.occupation}
-                                onChange={handleChange}
-                                icon={<Briefcase size={18} />}
-                            />
-                            <LabelledInput
-                                label="Bio"
-                                name="bio"
-                                placeholder="Write about yourself..."
-                                value={postInputs.bio}
-                                onChange={handleChange}
-                                icon={<Info size={18} />}
-                            />
-                        </>
-                    )}
-                    <LabelledInput
-                        label="Password"
-                        name="password"
-                        type="password"
-                        placeholder="******"
-                        value={postInputs.password}
-                        onChange={handleChange}
-                        icon={<Lock size={18} />}
-                    />
-                    <p className="text-slate-500 flex justify-center items-center pt-4 text-sm">
-                        {type === "signin" ? "Don't have an account?" : "Already have an account?"}
-                        <Link
-                            className="pl-2 underline text-blue-600 hover:text-blue-800"
-                            to={type === "signin" ? "/signup" : "/signin"}
-                        >
-                            {type === "signin" ? "Sign up" : "Sign in"}
-                        </Link>
-                    </p>
-                    <button
-                        onClick={sendRequest}
-                        type="button"
-                        disabled={loading}
-                        className="mt-6 w-full text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5"
-                    >
-                        {loading ? "Processing..." : type === "signup" ? "Sign up" : "Sign in"}
+                    <Field label="Password" name="password" type="password" value={postInputs.password} onChange={handleChange} placeholder="At least 6 characters" autoComplete={isSignup ? "new-password" : "current-password"} minLength={6} />
+                    <button type="submit" disabled={loading || !postInputs.email || !postInputs.password || (isSignup && !postInputs.name)} className="button-primary group/submit !mt-7 w-full !min-h-12">
+                        {loading && <LoaderCircle size={17} className="animate-spin" />}
+                        {loading ? (isSignup ? "Creating account…" : "Signing in…") : isSignup ? "Create account" : "Sign in"}
+                        {!loading && <ArrowRight size={16} className="transition-transform duration-200 group-hover/submit:translate-x-0.5" />}
                     </button>
-                </div>
+                </form>
+                <p className="rise d-3 mt-6 text-sm text-muted">
+                    {isSignup ? "Already have an account?" : "New to InspireWrite?"}{" "}
+                    <Link className="font-semibold text-ink underline decoration-accent decoration-2 underline-offset-4 transition-colors hover:text-accent" to={isSignup ? "/signin" : "/signup"}>{isSignup ? "Sign in" : "Create an account"}</Link>
+                </p>
             </div>
-        </div>
+        </main>
     );
 };
 
-interface LabelledInputProps {
-    label: string;
-    name: string;
-    placeholder: string;
-    value: string;
-    onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-    type?: string;
-    icon?: JSX.Element;
-}
-
-const LabelledInput = ({
-    label,
-    name,
-    placeholder,
-    value,
-    onChange,
-    type = "text",
-    icon,
-}: LabelledInputProps) => {
-    return (
-        <div className="mt-4">
-            <label className="block mb-2 text-sm text-gray-700 font-semibold">{label}</label>
-            <div className="relative">
-                {icon && (
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                        {icon}
-                    </div>
-                )}
-                <input
-                    name={name}
-                    value={value}
-                    onChange={onChange}
-                    type={type}
-                    className={`bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 ${
-                        icon ? "pl-10" : ""
-                    }`}
-                    placeholder={placeholder}
-                    required
-                />
-            </div>
-        </div>
-    );
-};
-
+interface FieldProps { label: string; name: string; value: string; onChange: (event: ChangeEvent<HTMLInputElement>) => void; placeholder: string; type?: string; autoComplete: string; minLength?: number; }
+const Field = ({ label, name, value, onChange, placeholder, type = "text", autoComplete, minLength }: FieldProps) => (
+    <div>
+        <label htmlFor={name} className="field-label">{label}</label>
+        <input id={name} name={name} value={value} onChange={onChange} type={type} className="text-field" placeholder={placeholder} autoComplete={autoComplete} minLength={minLength} required />
+    </div>
+);
