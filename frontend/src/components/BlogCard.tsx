@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
+import { Heart } from "lucide-react";
 import { formatDate } from "./FormatDate";
-import { ThumbsUp } from "lucide-react";
 
 interface BlogCardProps {
     authorName: string;
@@ -11,76 +11,46 @@ interface BlogCardProps {
     id: string;
     area: string;
     likes?: number;
+    variant?: "featured" | "standard";
+    index?: number;
 }
 
-export const BlogCard = ({
-    id,
-    authorName,
-    occupation,
-    title,
-    content,
-    publishedDate,
-    area,
-    likes,
-}: BlogCardProps) => {
+export const BlogCard = ({ id, authorName, occupation, title, content, publishedDate, area, likes = 0, variant = "standard", index = 0 }: BlogCardProps) => {
+    const featured = variant === "featured";
+    const excerptLength = featured ? 240 : 160;
+    const excerpt = content.length > excerptLength ? `${content.slice(0, excerptLength).trim()}…` : content;
+    const readingTime = Math.max(1, Math.ceil(content.length / 1000));
+
     return (
-        <div className="p-4 sm:p-6 rounded-lg drop-shadow-xl hover:drop-shadow-2xl hover:shadow-xl transition-shadow bg-white max-w-screen-md mx-auto">
-            <Link to={`/blog/${id}`}>
-                {/* Author Info */}
-                <div className="flex items-center space-x-3">
-                    <Avatar name={authorName} />
-                    <div>
-                        <div className="text-sm font-medium text-gray-800">{authorName}</div>
-                        <div className="text-xs text-gray-500">{occupation}</div>
-                    </div>
-                </div>
-
-                {/* Blog Title */}
-                <div className="mt-4 text-lg sm:text-xl font-bold text-gray-900">{title}</div>
-
-                {/* Blog Content Preview */}
-                <div className="mt-2 text-sm text-gray-700 leading-relaxed">
-                    {content.slice(0, 120)}...
-                </div>
-
-                {/* Blog Metadata */}
-                <div className="flex flex-wrap items-center justify-between mt-4 text-sm text-gray-500">
-                    <div className="flex items-center space-x-2">
-                        <span>{`${Math.ceil(content.length / 200)} min read`}</span>
-                        <Circle />
-                        <div className="flex items-center space-x-1">
-                            <ThumbsUp size={16} className="text-gray-500" />
-                            <span>{likes || 0}</span>
-                        </div>
-                    </div>
-                    <div className="flex items-center space-x-2 mt-2 sm:mt-0">
-                        <span className="text-red-600">{area}</span>
-                        <span className="ml-2">{formatDate(publishedDate)}</span>
-                    </div>
+        <article className={`rise ${featured ? "pt-10" : "border-b border-line"}`} style={featured ? undefined : { animationDelay: `${Math.min(index, 8) * 50}ms` }}>
+            <Link
+                to={`/blog/${id}`}
+                className={featured
+                    ? "group block rounded-2xl border border-line bg-surface p-6 transition-colors duration-200 hover:border-ink/20 sm:p-10"
+                    : "group block py-8"}
+            >
+                <p className="eyebrow">{featured ? `Featured · ${area || "General"}` : area || "General"}</p>
+                <h2 className={`headline mt-2 transition-colors duration-200 group-hover:text-accent ${featured ? "text-3xl sm:text-4xl" : "text-xl sm:text-2xl"}`}>{title}</h2>
+                <p className={`mt-3 max-w-2xl text-muted ${featured ? "leading-7" : "text-[0.95rem] leading-6"}`}>{excerpt || "Open this story to start reading."}</p>
+                <div className="mt-5 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted">
+                    <span className="flex items-center gap-2 text-ink">
+                        <Avatar name={authorName} />
+                        <span className="font-medium">{authorName}</span>
+                        <span className="hidden text-muted sm:inline">· {occupation || "Writer"}</span>
+                    </span>
+                    <span>{formatDate(publishedDate)}</span>
+                    <span>{readingTime} min read</span>
+                    <span className="inline-flex items-center gap-1"><Heart size={13} />{likes}</span>
                 </div>
             </Link>
-        </div>
+        </article>
     );
 };
 
-export function Circle() {
-    return <div className="h-1 w-1 rounded-full bg-gray-400"></div>;
-}
-
 export function Avatar({ name, size = "small" }: { name: string; size?: "small" | "big" }) {
     return (
-        <div
-            className={`relative inline-flex items-center justify-center overflow-hidden bg-gray-600 rounded-full ${
-                size === "small" ? "w-6 h-6 sm:w-8 sm:h-8" : "w-10 h-10 sm:w-12 sm:h-12"
-            }`}
-        >
-            <span
-                className={`${
-                    size === "small" ? "text-xs sm:text-sm" : "text-sm sm:text-base"
-                } font-semibold text-gray-100`}
-            >
-                {name[0].toUpperCase()}
-            </span>
-        </div>
+        <span className={`inline-grid shrink-0 place-items-center rounded-full bg-ink/10 font-semibold text-ink ${size === "small" ? "h-7 w-7 text-xs" : "h-11 w-11 text-base"}`}>
+            {(name[0] || "?").toUpperCase()}
+        </span>
     );
 }
