@@ -45,7 +45,7 @@ export const useUserName = () => {
             .finally(() => {
                 setLoading(false);
             });
-    }, []);
+    }, [navigate]);
 
     return { loading, name,userId };
 };
@@ -55,7 +55,8 @@ export const useBlog = ({ id }: { id: string }) => {
     const [blog, setBlog] = useState<Blog>();
     const [likes, setLikes] = useState<number>(0);
     const [liked, setLiked] = useState(false);
-    const navigate = useNavigate(); 
+    const [actionError, setActionError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchBlog = async () => {
@@ -87,6 +88,7 @@ export const useBlog = ({ id }: { id: string }) => {
     }, [id, navigate]);
 
     const handleLike = async () => {
+        setActionError(null);
         try {
             if (!liked) {
                 await axios.post(
@@ -109,8 +111,8 @@ export const useBlog = ({ id }: { id: string }) => {
                 setLikes((prev) => prev - 1);
                 setLiked(false);
             }
-        } catch (error) {
-            console.error("Error updating like status:", error);
+        } catch {
+            setActionError("Your like could not be updated. Check your connection and try again.");
         }
     };
 
@@ -120,14 +122,19 @@ export const useBlog = ({ id }: { id: string }) => {
         likes,
         liked,
         handleLike,
+        actionError,
     };
 };
 
 export const useBlogs = ({ query }: { query: string }) => {
     const [loading, setLoading] = useState(true);
     const [blogs, setBlogs] = useState<Blog[]>([]);
+    const [error, setError] = useState<string | null>(null);
+    const [retryKey, setRetryKey] = useState(0);
 
     useEffect(() => {
+        setLoading(true);
+        setError(null);
         axios
             .get(`${BACKEND_URL}/api/v1/blog/bulk?filter=${query}`, {
                 headers: {
@@ -135,30 +142,19 @@ export const useBlogs = ({ query }: { query: string }) => {
                 },
             })
             .then((response) => {
-                if (response.data.blogs.length === 0) {
-                    setBlogs([
-                        {
-                            content: "",
-                            title: "No blogs available with search content",
-                            id: "",
-                            author: { name: "", occupation: "", bio: "" , id: "" },
-                            publishedAt: new Date().toISOString(),
-                            area: "",
-                            _count: { likes: 0 }, 
-                        },
-                    ]);
-                } else {
-                    setBlogs(response.data.blogs);
-                }
+                setBlogs(response.data.blogs);
                 setLoading(false);
             })
             .catch(() => {
+                setError("Stories could not be loaded.");
                 setLoading(false);
             });
-    }, [query]);
+    }, [query, retryKey]);
 
     return {
         loading,
         blogs,
+        error,
+        retry: () => setRetryKey((value) => value + 1),
     };
 };
