@@ -1,115 +1,120 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft, Heart, LoaderCircle, Trash2 } from "lucide-react";
+import { BACKEND_URL } from "../config";
 import { useBlog } from "../hooks";
 import { Appbar } from "./Appbar";
-import { Avatar, Circle } from "./BlogCard";
+import { Avatar } from "./BlogCard";
 import { formatDate } from "./FormatDate";
-import { ThumbsUp } from "lucide-react";
-import { ArrowLeft } from "lucide-react";
 import { FullBlogSkeleton } from "./FullBlogSkeleton";
-import axios from "axios";
-import { BACKEND_URL } from "../config";
-import { useNavigate } from "react-router-dom";
+
+const useReadingProgress = () => {
+    const [progress, setProgress] = useState(0);
+    useEffect(() => {
+        const onScroll = () => {
+            const max = document.documentElement.scrollHeight - window.innerHeight;
+            setProgress(max > 0 ? Math.min(1, window.scrollY / max) : 0);
+        };
+        onScroll();
+        window.addEventListener("scroll", onScroll, { passive: true });
+        return () => window.removeEventListener("scroll", onScroll);
+    }, []);
+    return progress;
+};
 
 export const FullBlog = ({ blogId }: { blogId: string }) => {
-    const { loading, blog, likes, liked, handleLike } = useBlog({ id: blogId });
+    const { loading, blog, likes, liked, handleLike, actionError } = useBlog({ id: blogId });
     const navigate = useNavigate();
+    const progress = useReadingProgress();
+    const [confirmingDelete, setConfirmingDelete] = useState(false);
+    const [deleting, setDeleting] = useState(false);
+    const [deleteError, setDeleteError] = useState<string | null>(null);
 
     const handleDelete = async () => {
-        if (confirm("Are you sure you want to delete this blog?")) {
-            try {
-                await axios.delete(`${BACKEND_URL}/api/v1/blog/${blogId}`, {
-                    headers: {
-                        Authorization: localStorage.getItem("token"),
-                    },
-                });
-                alert("Blog deleted successfully.");
-                navigate("/blogs");
-            } catch (error) {
-                console.error("Error deleting blog:", error);
-                alert("Failed to delete the blog.");
-            }
+        setDeleting(true);
+        setDeleteError(null);
+        try {
+            await axios.delete(`${BACKEND_URL}/api/v1/blog/${blogId}`, { headers: { Authorization: localStorage.getItem("token") } });
+            navigate("/blogs", { replace: true });
+        } catch {
+            setDeleteError("This story could not be deleted. Check your connection and try again.");
+            setDeleting(false);
         }
     };
 
-    if (loading)
-        return (
-            <div>
-                <Appbar />
-                <FullBlogSkeleton />
-            </div>
-        );
+    if (loading) return <div><Appbar /><FullBlogSkeleton /></div>;
+    if (!blog) return null;
 
-    const isAuthor = blog?.author?.id === localStorage.getItem("userId");
+    const isAuthor = blog.author.id === localStorage.getItem("userId");
+    const readingTime = Math.max(1, Math.ceil(blog.content.length / 1000));
+    const authorName = blog.author.name || "Anonymous";
 
     return (
-        <div>
-            <Appbar button={<ArrowLeft />} />
+        <div className="min-h-screen">
+            <div aria-hidden="true" className="fixed inset-x-0 top-0 z-50 h-0.5 origin-left bg-accent transition-transform duration-100" style={{ transform: `scaleX(${progress})` }} />
+            <Appbar button={<ArrowLeft size={18} />} />
+            <main id="main-content" className="page-shell pb-28 pt-12 sm:pt-20">
+                <article className="mx-auto max-w-3xl">
+                    <header className="border-b border-line pb-8">
+                        <p className="eyebrow rise">{blog.area || "General"}</p>
+                        <h1 className="headline rise d-1 mt-3 text-balance text-4xl sm:text-5xl">{blog.title}</h1>
+                        <div className="rise d-2 mt-6 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted">
+                            <Avatar name={authorName} />
+                            <span className="font-medium text-ink">{authorName}</span>
+                            <span aria-hidden="true">·</span>
+                            <span>{formatDate(blog.publishedAt || "")}</span>
+                            <span aria-hidden="true">·</span>
+                            <span>{readingTime} min read</span>
+                        </div>
+                    </header>
 
-            <div className="flex justify-center min-h-screen">
-                <div className="grid grid-cols-12 w-full max-w-screen-xl pt-12 px-4 lg:px-10">
-                    <div className="col-span-12 lg:col-span-8 bg-white shadow-lg rounded-lg p-6">
-                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-gray-800">
-                            {blog?.title}
-                        </h1>
-                        <div className="flex items-center pt-4 text-sm text-slate-500">
-                            <span>{formatDate(blog?.publishedAt || "")}</span>
-                            <div className="px-2" />
-                            <Circle />
-                            <span className="text-blue-500 px-2">{blog?.author.occupation}</span>
-                            <Circle />
-                            <span className="text-red-500 px-2">{blog?.area}</span>
-                        </div>
-                        <div className="pt-6 text-base md:text-lg text-gray-700 leading-relaxed">
-                            {blog?.content}
-                        </div>
-                        <div className="pt-6 flex items-center space-x-4">
-                            <button
-                                onClick={handleLike}
-                                className={`flex items-center px-4 py-2 text-sm font-medium rounded-lg transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                                    liked
-                                        ? "bg-blue-600 text-white hover:bg-blue-700"
-                                        : "bg-gray-200 text-gray-800 hover:bg-gray-300"
-                                }`}
-                            >
-                                <ThumbsUp
-                                    className={`w-5 h-5 mr-2 ${
-                                        liked ? "text-white" : "text-gray-800"
-                                    }`}
-                                />
-                                {liked ? "Liked" : "Like"}
+                    <div className="reading-copy rise d-3 mt-10 whitespace-pre-wrap">
+                        {blog.content}
+                    </div>
+
+                    <div className="mt-14 flex flex-wrap items-center justify-between gap-4 border-y border-line py-5">
+                        <div className="flex items-center gap-4">
+                            <button onClick={handleLike} aria-pressed={liked} className={liked ? "button-accent" : "button-secondary"}>
+                                <Heart size={16} fill={liked ? "currentColor" : "none"} className={`transition-transform duration-200 ${liked ? "scale-110" : ""}`} />
+                                {liked ? "Liked" : "Like this story"}
                             </button>
-                            <span className="text-gray-600 text-sm">
-                                {likes} {likes === 1 ? "Like" : "Likes"}
-                            </span>
+                            <span className="text-sm text-muted">{likes} {likes === 1 ? "like" : "likes"}</span>
                         </div>
+                        {actionError && <p role="alert" className="notice-error w-full">{actionError}</p>}
+                    </div>
+
+                    <aside className="mt-10 rounded-2xl border border-line bg-surface p-6" aria-label="About the author">
+                        <div className="flex items-start gap-4">
+                            <Avatar name={authorName} size="big" />
+                            <div className="min-w-0">
+                                <p className="text-xs text-muted">Written by</p>
+                                <h2 className="mt-0.5 text-lg font-semibold">{authorName}</h2>
+                                <p className="text-sm text-muted">{blog.author.occupation || "Writer"}</p>
+                            </div>
+                        </div>
+                        <p className="mt-4 text-[0.95rem] leading-7 text-muted">{blog.author.bio || "A member of the InspireWrite community."}</p>
+
                         {isAuthor && (
-                            <div className="pt-6">
-                                <button
-                                    onClick={handleDelete}
-                                    className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-                                >
-                                    Delete Blog
-                                </button>
+                            <div className="mt-7 border-t border-line pt-6">
+                                {!confirmingDelete ? (
+                                    <button onClick={() => setConfirmingDelete(true)} className="inline-flex min-h-10 items-center gap-2 text-sm font-medium text-red-600 transition-opacity dark:text-red-400 hover:opacity-75"><Trash2 size={15} />Delete story</button>
+                                ) : (
+                                    <div className="drop">
+                                        <h3 className="font-semibold">Delete this story?</h3>
+                                        <p className="mt-1 text-sm text-muted">This cannot be undone.</p>
+                                        {deleteError && <p role="alert" className="notice-error mt-4">{deleteError}</p>}
+                                        <div className="mt-5 flex flex-wrap gap-3">
+                                            <button onClick={handleDelete} disabled={deleting} className="button-accent">{deleting ? <LoaderCircle size={16} className="animate-spin" /> : <Trash2 size={16} />}{deleting ? "Deleting…" : "Delete story"}</button>
+                                            <button onClick={() => { setConfirmingDelete(false); setDeleteError(null); }} disabled={deleting} className="button-secondary">Cancel</button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         )}
-                    </div>
-                    <div className="col-span-12 lg:col-span-4 lg:pl-10 pt-10 lg:pt-0">
-                        <div className="bg-white shadow-md rounded-lg p-6">
-                            <div className="text-slate-600 text-lg font-semibold mb-4">Author</div>
-                            <div className="flex items-center">
-                                <Avatar size="big" name={blog?.author?.name || "Anonymous"} />
-                                <div className="ml-4">
-                                    <div className="text-xl font-bold">
-                                        {blog?.author?.name || "Anonymous"}
-                                    </div>
-                                    <div className="pt-2 text-slate-500">
-                                        {blog?.author?.bio || "No Bio"}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+                    </aside>
+                </article>
+            </main>
         </div>
     );
 };
